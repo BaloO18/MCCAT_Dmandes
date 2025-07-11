@@ -14,7 +14,7 @@ class Role extends Model
 
     // Champs qui peuvent être assignés massivement (mass assignable)
     protected $fillable = [
-        'nomRole', // Basé sur nomRole dans votre migration create_roles_table
+        'nom', // Basé sur nom dans votre migration create_roles_table
     ];
 
     /**

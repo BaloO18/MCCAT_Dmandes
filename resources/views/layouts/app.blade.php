@@ -8,15 +8,15 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            background-color: #f0f2f5; /* Couleur de fond plus douce pour le dashboard */
+            background-color: #f0f2f5;
             color: #333;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* S'assure que le footer reste en bas */
+            min-height: 100vh;
         }
 
         .header {
-            background-color: #ffffff; /* Fond blanc pour le header */
+            background-color: #ffffff;
             color: #333;
             padding: 15px 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -26,22 +26,22 @@
         }
         .header h1 {
             margin: 0;
-            font-size: 1.5em; /* Taille de titre ajustée */
+            font-size: 1.5em;
             color: #2c3e50;
         }
 
         .dashboard-wrapper {
             display: flex;
-            flex: 1; /* Permet au wrapper de prendre l'espace restant */
+            flex: 1;
         }
 
         .sidebar {
-            width: 250px; /* Largeur de la barre latérale */
-            background-color: #2c3e50; /* Couleur sombre pour la sidebar */
+            width: 250px;
+            background-color: #2c3e50;
             color: white;
             padding-top: 20px;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            flex-shrink: 0; /* Empêche la sidebar de se rétrécir */
+            flex-shrink: 0;
         }
         .sidebar-logo {
             text-align: center;
@@ -63,26 +63,26 @@
             padding: 12px 20px;
             text-decoration: none;
             transition: background-color 0.3s ease, color 0.3s ease;
-            border-left: 5px solid transparent; /* Bordure pour l'état actif/hover */
+            border-left: 5px solid transparent;
         }
         .sidebar ul li a:hover {
-            background-color: #34495e; /* Couleur plus claire au survol */
+            background-color: #34495e;
             border-left-color: #3498db;
         }
         .sidebar ul li a.active {
-            background-color: #3498db; /* Couleur active */
+            background-color: #3498db;
             border-left-color: #ecf0f1;
             font-weight: bold;
         }
 
         .main-content {
-            flex: 1; /* Prend tout l'espace disponible */
+            flex: 1;
             padding: 20px;
             background-color: #f0f2f5;
         }
         .container {
             max-width: 1200px;
-            margin: 0 auto; /* Centrage du contenu à l'intérieur du main-content */
+            margin: 0 auto;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
@@ -105,19 +105,18 @@
         .footer {
             text-align: center;
             padding: 20px;
-            background-color: #2c3e50; /* Même couleur que la sidebar */
+            background-color: #2c3e50;
             color: white;
             font-size: 0.9em;
-            margin-top: auto; /* Pousse le footer vers le bas */
+            margin-top: auto;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
 
         /* Styles existants pour formulaires et tableaux (ajustés si nécessaire) */
-        form { padding: 0; border-radius: 8px; max-width: 700px; margin: auto; } /* Retiré le padding et max-width directement sur form pour le mettre dans .container */
         form div { margin-bottom: 15px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
         input[type="text"], input[type="email"], input[type="password"], input[type="date"], textarea, select {
-            width: calc(100% - 22px); /* Ajusté pour le padding/bordure */
+            width: calc(100% - 22px);
             padding: 10px;
             border: 1px solid #ced4da;
             border-radius: 5px;
@@ -172,7 +171,6 @@
             border-radius: 5px;
             text-decoration: none;
             font-weight: bold;
-            transition: background-color 0.3s ease;
             margin-bottom: 20px;
         }
         .add-button:hover { background-color: #0056b3; }
@@ -187,22 +185,39 @@
 <body>
     <div class="header">
         <h1>Demande de Matieres</h1>
-        {{-- Ici, on pourra ajouter des éléments comme le nom de l'utilisateur connecté, un bouton de déconnexion, etc. --}}
         <div>
-            <a href="#" style="color: #333; text-decoration: none; font-weight: bold;">[Nom Utilisateur]</a>
+            @auth {{-- N'affiche cette section que si un utilisateur est connecté --}}
+                <span style="color: #333; font-weight: bold; margin-right: 15px;">
+                    Bonjour, {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
+                </span>
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Déconnexion</button>
+                </form>
+            @else {{-- Si aucun utilisateur n'est connecté, affiche des liens de connexion/inscription --}}
+                <a href="{{ route('login') }}" style="color: #333; text-decoration: none; font-weight: bold; margin-right: 15px;">Se connecter</a>
+                <a href="{{ route('register') }}" style="color: #333; text-decoration: none; font-weight: bold;">S'inscrire</a>
+            @endauth
         </div>
     </div>
 
     <div class="dashboard-wrapper">
         <div class="sidebar">
-            <a href="/" class="sidebar-logo">Dashboard MCCAT</a>
+            <a href="{{ Auth::check() ? route('dashboard') : route('login') }}" class="sidebar-logo">Dashboard MCCAT</a>
             <ul>
-                <li><a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">Utilisateurs</a></li>
-                <li><a href="{{ route('structures.index') }}" class="{{ request()->routeIs('structures.*') ? 'active' : '' }}">Structures</a></li>
-                <li><a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">Rôles</a></li>
-                <li><a href="{{ route('materiels.index') }}" class="{{ request()->routeIs('materiels.*') ? 'active' : '' }}">Matériel</a></li>
-                <li><a href="{{ route('demandes.index') }}" class="{{ request()->routeIs('demandes.*') ? 'active' : '' }}">Demandes</a></li>
-                {{-- D'autres liens de navigation pourront être ajoutés ici --}}
+                {{-- Ces liens seront visibles si l'utilisateur est connecté --}}
+                @auth
+                    <li><a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">Dashboard</a></li>
+                    <li><a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}">Utilisateurs</a></li>
+                    <li><a href="{{ route('structures.index') }}" class="{{ request()->routeIs('structures.*') ? 'active' : '' }}">Structures</a></li>
+                    <li><a href="{{ route('roles.index') }}" class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">Rôles</a></li>
+                    <li><a href="{{ route('materiels.index') }}" class="{{ request()->routeIs('materiels.*') ? 'active' : '' }}">Matériel</a></li>
+                    <li><a href="{{ route('demandes.index') }}" class="{{ request()->routeIs('demandes.*') ? 'active' : '' }}">Demandes</a></li>
+                @else
+                    {{-- Ces liens sont pour les utilisateurs non connectés, typiquement juste login/register --}}
+                    <li><a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'active' : '' }}">Se connecter</a></li>
+                    <li><a href="{{ route('register') }}" class="{{ request()->routeIs('register') ? 'active' : '' }}">S'inscrire</a></li>
+                @endauth
             </ul>
         </div>
 
